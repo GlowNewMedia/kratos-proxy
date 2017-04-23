@@ -1,0 +1,39 @@
+<md-card>
+  <md-card-header>
+    <md-card-title>Servers</md-card-title>
+
+    <span class="fill-remaining-space"></span>
+
+    <button md-icon-button [mdMenuTriggerFor]="menu">
+      <md-icon>more_vert</md-icon>
+    </button>
+    <md-menu #menu="mdMenu">
+      <button md-menu-item>
+        <md-icon>add</md-icon>
+        <span>Add</span>
+      </button>
+      <button md-menu-item>
+        <md-icon>clear_all</md-icon>
+        <span>Clear All</span>
+      </button>
+    </md-menu>
+  </md-card-header>
+  <md-card-content>
+    <md-list>
+      <ng-template [ngIf]="!loading">
+        <md-list-item *ngFor="let server of servers">
+          <md-icon md-list-icon>dvr</md-icon>
+          <h4 md-line>{{server.name}}</h4>
+          <p md-line>{{server.ip}}</p>
+          <p md-line>{{server.clients.length}}</p>
+        </md-list-item>
+      </ng-template>
+      <ng-template [ngIf]="loading" style="flex-direction: row; align-items: center; justify-content: center;">
+        <md-progress-spinner
+            [attr.color]="color"
+            [mode]="mode">
+          </md-progress-spinner>
+      </ng-template>
+    </md-list>
+  </md-card-content>
+</md-card>
