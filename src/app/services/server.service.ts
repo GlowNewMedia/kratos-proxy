@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from './http.client';
 
-import { Server } from '../models/server';
+import { Server } from '../../shared/models/server';
 
 @Injectable()
 export class ServerService {

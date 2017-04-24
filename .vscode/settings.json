@@ -1,3 +1,17 @@
 // Place your settings in this file to overwrite default and user settings.
+// Place your settings in this file to overwrite the default settings
 {
+    "files.autoSave": "onFocusChange",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "node_modules/": true,
+        "dist/": true,
+        ".tscache/": true,
+        "**/.baseDir.ts": true
+    },
+    "vsicons.presets.angular": true
 }

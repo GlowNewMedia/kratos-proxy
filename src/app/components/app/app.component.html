@@ -7,6 +7,14 @@
 </md-toolbar>
 
 <div class="app-component">
-  <server-server-list>
-  </server-server-list>
+  <md-card>
+    <md-card-content>
+      <nav md-tab-nav-bar>
+        <a md-tab-link [routerLink]="['/servers']" routerLinkActive #rlaServer="routerLinkActive" [active]="rlaServer.isActive">Servers</a>
+        <a md-tab-link [routerLink]="['/clients']" routerLinkActive #rlaClient="routerLinkActive" [active]="rlaClient.isActive">Clients</a>
+      </nav>
+      
+      <router-outlet></router-outlet>
+    </md-card-content>
+  </md-card>
 </div>

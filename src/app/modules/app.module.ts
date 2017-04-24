@@ -3,10 +3,14 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { RouterModule } from '@angular/router';
 import { MaterialModule } from '@angular/material';
 
 import { ServerModule } from './server.module';
+import { ClientModule } from './client.module';
 import { SharedModule } from './shared.module';
+
+import { AppRoutingModule } from '../routes/app.routes';
 
 import { AppComponent } from '../components/app/app.component';
 
@@ -15,10 +19,14 @@ import { AppComponent } from '../components/app/app.component';
     BrowserModule,
     FormsModule,
     HttpModule,
+    RouterModule,
     MaterialModule,
     BrowserAnimationsModule,
     ServerModule,
-    SharedModule
+    ClientModule,
+    SharedModule,
+
+    AppRoutingModule
   ],
   providers: [],
   declarations: [

@@ -33,7 +33,7 @@ export class ServerRoute extends BaseRoute {
      * @param res 
      */
     public get(req: Request, res: Response) {
-        this.render(req, res, []);
+        this.render(req, res, this.serverService.getServers());
     }
 
     /**

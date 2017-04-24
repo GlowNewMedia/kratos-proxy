@@ -73,7 +73,7 @@ export class Server {
    * @method config
    */
   public config() {
-    this.app.use(express.static(path.join(__dirname, '../app')));
+    this.app.use(express.static(path.join(__dirname, '../../app')));
 
     this.app.use(logger("dev"));
 
@@ -89,7 +89,7 @@ export class Server {
    */
   public routes() {
     this.app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../app/index.html'));
+      res.sendFile(path.join(__dirname, '../../app/index.html'));
     });
   }
 }

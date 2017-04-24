@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ServerService } from '../../../services/server.service';
 
-import { Server } from '../../../models/server';
+import { Server } from '../../../../shared/models/server';
 
 @Component({
   selector: 'server-server-list',
@@ -12,7 +12,7 @@ export class ServerListComponent implements OnInit {
   color = "primary";
   mode = "indeterminate";
   loading = true;
-  servers: Server[];
+  servers: Server[] = [];
 
   constructor(private serverService: ServerService) { }
 
