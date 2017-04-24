@@ -5,6 +5,8 @@ import * as path from "path";
 import errorHandler = require("errorhandler");
 import methodOverride = require("method-override");
 
+import { ProxyService } from './services/proxy.service';
+
 import { ServerRoute } from './routes/api/server';
 import { ClientRoute } from './routes/api/client';
 
@@ -16,6 +18,7 @@ import { ClientRoute } from './routes/api/client';
 export class Server {
 
   public app: express.Application;
+  public proxy: ProxyService;
 
   /**
    * Bootstrap the application.
@@ -47,6 +50,9 @@ export class Server {
 
     //add routes
     this.routes();
+
+    // setup proxy
+    this.setupProxy();
   }
 
   /**
@@ -91,5 +97,13 @@ export class Server {
     this.app.get('*', (req, res) => {
       res.sendFile(path.join(__dirname, '../../app/index.html'));
     });
+  }
+
+  /**
+   * Create proxy
+   */
+  public setupProxy() {
+    this.proxy = new ProxyService();
+    this.proxy.setupProxy(8080);
   }
 }

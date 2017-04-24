@@ -6,5 +6,5 @@ export class Client {
     name: string;
     ip: string;
 
-    server: Server;
+    serverId: string;
 }
