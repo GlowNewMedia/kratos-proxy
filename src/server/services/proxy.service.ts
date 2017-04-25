@@ -12,7 +12,6 @@ export class ProxyService {
     private server: http.Server;
     private port: number;
     
-
     /**
      *
      */
@@ -73,7 +72,8 @@ export class ProxyService {
      */
     public async onRequest(req: http.IncomingMessage, res: http.ServerResponse) {
         console.log("[ProxyService::onRequest] New Request");
-    
+        console.time("[ProxyService::onRequest] Request Took");
+
         let target = await this.getProxy(req, res);
 
         if(target == null){
@@ -86,6 +86,8 @@ export class ProxyService {
                 target: target, toProxy: true
             });
         }
+
+        console.timeEnd("[ProxyService::onRequest] Request Took");
     }
 
     /**
