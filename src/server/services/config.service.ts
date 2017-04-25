@@ -5,7 +5,6 @@ export class ConfigService<T> {
      *  Wraps a filename in a handy helper class
      */
     constructor(private fileName: string) {
-        
     }
 
     public async getConfig(): Promise<T> {

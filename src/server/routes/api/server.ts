@@ -24,6 +24,12 @@ export class ServerRoute extends BaseRoute {
 
         this.registerRoute('/', Method.GET, (req, res) => { new ServerRoute().get(req, res); });
 
+        this.registerRoute('/add', Method.POST, (req, res) => { new ServerRoute().add(req, res); });
+
+        this.registerRoute('/edit', Method.POST, (req, res) => { new ServerRoute().edit(req, res); });
+
+        this.registerRoute('/remove', Method.POST, (req, res) => { new ServerRoute().remove(req, res); });
+
         this.registerRoute('/online/:id', Method.GET, (req, res) => { new ServerRoute().isOnline(req, res); });
     }
 
@@ -33,9 +39,42 @@ export class ServerRoute extends BaseRoute {
      * @param res 
      */
     public async get(req: Request, res: Response) {
-        let server = await this.serverService.getServers();
+        let servers = await this.serverService.getServers();
 
-        this.render(req, res, server);
+        this.render(req, res, servers);
+    }
+
+    /**
+     * add
+     * @param req
+     * @param res
+     */
+    public async add(req: Request, res: Response) {
+        let server = await this.serverService.addServer(req.body);
+
+        return server;
+    }
+
+    /**
+     * edit
+     * @param req
+     * @param res
+     */
+    public async edit(req: Request, res: Response) {
+        let server = await this.serverService.editServer(req.body);
+
+        return server;
+    }
+
+    /**
+     * 
+     * @param req 
+     * @param res 
+     */
+    public async remove(req: Request, res: Response) {
+        let success = await this.serverService.removeServer(req.body);
+
+        return success;
     }
 
     /**

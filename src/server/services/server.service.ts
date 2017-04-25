@@ -5,6 +5,7 @@ import { AvailabilityResult } from '../models/availabilityResult';
 
 import * as net from 'net';
 import * as _ from 'underscore';
+import * as uuidV4 from 'uuid/v4';
 
 export class ServerService {
     public static availableServerCache: AvailabilityResult[];
@@ -33,6 +34,64 @@ export class ServerService {
         let servers = await this.getServers();
 
         return _.findWhere(servers, { id: id});
+    }
+
+    /**
+     * Adds a client
+     * @param client 
+     */
+    public async addServer(server: Server): Promise<Server> {
+        let servers = await this.getServers();
+
+        if(servers == null) {
+            throw "Client can not be null";
+        }
+
+        server.id = uuidV4();
+
+        servers.push(server);
+
+        await this.configService.saveConfig(servers);
+
+        return server;
+    }
+
+    /**
+     * Removes a server
+     * @param server
+     */
+    public async removeServer(server: Server): Promise<boolean> {
+        let servers = await this.getServers();
+        let index = _.findIndex(servers, { id: server.id });
+
+        if(index == -1){
+            throw "Server not found";
+        }
+
+        servers.splice(index, 1);
+
+        await this.configService.saveConfig(servers);
+
+        return true;
+    }
+
+    /**
+     * Edits a server
+     * @param server 
+     */
+    public async editServer(server: Server): Promise<Server> {
+        let servers = await this.getServers();
+        let index = _.findIndex(servers, { id: server.id });
+
+        if(index == -1){
+            throw "Server not found";
+        }
+
+        servers[index] = server;
+
+        await this.configService.saveConfig(servers);
+
+        return server;
     }
 
     /**
