@@ -32,8 +32,10 @@ export class ServerRoute extends BaseRoute {
      * @param req 
      * @param res 
      */
-    public get(req: Request, res: Response) {
-        this.render(req, res, this.serverService.getServers());
+    public async get(req: Request, res: Response) {
+        let server = await this.serverService.getServers();
+
+        this.render(req, res, server);
     }
 
     /**

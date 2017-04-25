@@ -22,7 +22,7 @@ export class ProxyService {
     }
 
     /**
-     * setupProxy
+     * Setup the proxy
      */
     public setupProxy(port: number) {
         console.log("[ProxyService::setupProxy] Setup proxy on port: " + port);
@@ -77,7 +77,9 @@ export class ProxyService {
         let target = await this.getProxy(req, res);
 
         if(target == null){
-            this.proxy.web(req, res);
+            this.proxy.web(req, res, {
+                target: { host: req.headers.host, port: 80 }
+            });
         }
         else{
             this.proxy.web(req, res, {
@@ -99,15 +101,23 @@ export class ProxyService {
 
         let serverId = await this.clientService.getResponsibleServerId(ip);
 
-        let server = await this.serverService.getServerById(serverId);
-
-        let serverAvailable = await this.serverService.checkAvailable(server);
-
-        if(serverAvailable){
-            return { host: server.ip, port: server.port };
-        }
-        else{
+        if (serverId.trim() == "") {
+            console.warn("[ProxyService::getProxy] No client found for ip: ", ip);
             return null;
+        }
+        else {
+            let server = await this.serverService.getServerById(serverId);
+
+            let serverAvailable = await this.serverService.checkAvailable(server);
+
+            if (serverAvailable) {
+                console.log("[ProxyService::getProxy] Proxy server available");
+                return { host: server.ip, port: server.port };
+            }
+            else {
+                console.log("[ProxyService::getProxy] Proxy server unavailable");
+                return null;
+            }
         }
     }
 
@@ -119,6 +129,6 @@ export class ProxyService {
     public getIpFromRequest(req: http.IncomingMessage): string {
         console.log("[ProxyService::getIpFromRequest] Finding ip from the request");
 
-        return "127.0.0.1";
+        return req.connection.remoteAddress;
     }
 }

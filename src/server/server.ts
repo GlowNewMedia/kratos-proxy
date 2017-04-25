@@ -104,6 +104,6 @@ export class Server {
    */
   public setupProxy() {
     this.proxy = new ProxyService();
-    this.proxy.setupProxy(8080);
+    this.proxy.setupProxy(2020);
   }
 }

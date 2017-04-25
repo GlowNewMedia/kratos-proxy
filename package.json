@@ -46,6 +46,7 @@
     "rxjs": "^5.1.0",
     "typescript": "^2.2.2",
     "underscore": "^1.8.3",
+    "uuid": "^3.0.1",
     "zone.js": "^0.8.4"
   },
   "devDependencies": {

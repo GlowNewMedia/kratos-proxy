@@ -6,6 +6,4 @@ export class Server {
     ip: string;
     port: number;
     name: string;
-    
-    clients: Client[];
 }

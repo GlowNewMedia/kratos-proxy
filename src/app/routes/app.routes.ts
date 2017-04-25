@@ -7,7 +7,8 @@ import { ClientListComponent } from '../components/client/client-list/client-lis
 const routes: Routes = [
     { path: '', pathMatch: 'full', redirectTo: 'servers' },
     { path: 'servers', component: ServerListComponent },
-    { path: 'clients', component: ClientListComponent }
+    { path: 'clients', component: ClientListComponent },
+    { path: '**', pathMatch: 'full', redirectTo: 'servers' },
 ];
 
 @NgModule({

@@ -41,5 +41,8 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Config
+/config/*.json
+
 # TS Cache
 /.tscache/*

@@ -23,6 +23,6 @@ export class ClientRoute extends BaseRoute {
     }
 
     public get(req: Request, res: Response) {
-        this.render(req, res, []);
+        this.render(req, res, this.clientService.getClients());
     }
 }
