@@ -8,21 +8,15 @@
             <md-icon>more_vert</md-icon>
           </button>
       <md-menu #menu="mdMenu" [overlapTrigger]="false" xPosition="before">
-        <button md-menu-item>
+        <button md-menu-item (click)="edit(server)">
               <md-icon>edit</md-icon>
               <span>Edit</span>
             </button>
-        <button md-menu-item>
+        <button md-menu-item (click)="delete(server)">
               <md-icon>delete</md-icon>
               <span>Delete</span>
             </button>
       </md-menu>
-    </md-list-item>
-  </ng-template>
-  <ng-template [ngIf]="loading">
-    <md-list-item>
-      <!--<md-progress-spinner [attr.color]="color" [mode]="mode"></md-progress-spinner>-->
-      <h4 md-line>Loading</h4>
     </md-list-item>
   </ng-template>
 </md-list>

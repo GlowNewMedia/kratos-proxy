@@ -6,18 +6,18 @@ import { ClientService } from '../../services/client.service';
 
 export class ClientRoute extends BaseRoute {
     private clientService: ClientService;
-    
+
     /**
      * Setup the route
      */
     constructor() {
         super();
         this.clientService = new ClientService();
-        this.section = "clients";
+        this.section = 'clients';
     }
 
     create() {
-        console.log("[ClientRoute::create] Creating client routes.");
+        console.log('[ClientRoute::create] Creating client routes.');
 
         this.registerRoute('/', Method.GET, (req, res) => { new ClientRoute().get(req, res); });
 
@@ -28,40 +28,42 @@ export class ClientRoute extends BaseRoute {
         this.registerRoute('/remove', Method.POST, (req, res) => { new ClientRoute().remove(req, res); });
     }
 
-    public get(req: Request, res: Response) {
-        this.render(req, res, this.clientService.getClients());
+    public async get(req: Request, res: Response) {
+        const clients = await this.clientService.getClients();
+
+        this.render(req, res, clients);
     }
 
     /**
-     * add
+     * Adds the client
      * @param req
      * @param res
      */
     public async add(req: Request, res: Response) {
-        let client = await this.clientService.addClient(req.body);
+        const client = await this.clientService.addClient(req.body);
 
-        return client;
+        this.render(req, res, client);
     }
 
     /**
-     * edit
+     * Edits the client
      * @param req
      * @param res
      */
     public async edit(req: Request, res: Response) {
-        let client = await this.clientService.editClient(req.body);
+        const client = await this.clientService.editClient(req.body);
 
-        return client;
+        this.render(req, res, client);
     }
 
     /**
-     * 
-     * @param req 
-     * @param res 
+     * Removes the client
+     * @param req
+     * @param res
      */
     public async remove(req: Request, res: Response) {
-        let success = await this.clientService.removeClient(req.body);
+        const success = await this.clientService.removeClient(req.body);
 
-        return success;
+        this.render(req, res, success);
     }
 }

@@ -1,12 +1,34 @@
 /* You can add global styles to this file, and also import other style files */
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
 @import '~https://fonts.googleapis.com/icon?family=Material+Icons';
 
 .fill-remaining-space {
   flex: 1 1 auto;
 }
 
+h1 {
+  font-family: Roboto,"Helvetica Neue",sans-serif;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
 body {
+  height: 100%;
+  width: 100%;
   margin: 0;
   background-color: #fafafa;
+
+  display: flex;
+  flex-direction: column;
+}
+
+app-root {
+  height: 100%;
+}
+
+body > * {
+  flex-shrink: 0;
 }

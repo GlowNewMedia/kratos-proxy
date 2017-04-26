@@ -3,10 +3,22 @@
 
   <span class="fill-remaining-space"></span>
 
-  <span>BETA</span>
+  <button md-icon-button [mdMenuTriggerFor]="menu">
+    <md-icon>add</md-icon>
+  </button>
+  <md-menu #menu="mdMenu" [overlapTrigger]="false" xPosition="before">
+    <button md-menu-item (click)="addServer()">
+      <md-icon>dvr</md-icon>
+      <span>Add Server</span>
+    </button>
+    <button md-menu-item (click)="addClient()">
+      <md-icon>smartphone</md-icon>
+      <span>Add Client</span>
+    </button>
+  </md-menu>
 </md-toolbar>
 
-<div class="app-component">
+<div class="app-component fill-remaining-space">
   <md-card>
     <md-card-content>
       <nav md-tab-nav-bar>

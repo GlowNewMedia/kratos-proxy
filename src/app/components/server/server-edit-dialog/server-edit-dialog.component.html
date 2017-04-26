@@ -1,0 +1,16 @@
+<h1 md-dialog-title>Edit {{server.name}}</h1>
+<div md-dialog-content>
+  <md-input-container>
+    <input mdInput placeholder="Server Name" [(ngModel)]="server.name">
+  </md-input-container>
+  <md-input-container>
+    <input mdInput placeholder="Server IP" [(ngModel)]="server.ip">
+  </md-input-container>
+  <md-input-container>
+    <input mdInput placeholder="Server Port" [(ngModel)]="server.port" type="number">
+  </md-input-container>
+</div>
+<div md-dialog-actions>
+  <button md-button md-dialog-close>Cancel</button>
+  <button md-button (click)="save()">Save</button>
+</div>

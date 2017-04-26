@@ -6,21 +6,21 @@ import { ServerService } from '../../services/server.service';
 
 export class ServerRoute extends BaseRoute {
     private serverService: ServerService;
-    
+
     /**
      *  Setup the route
      */
     constructor() {
         super();
         this.serverService = new ServerService();
-        this.section = "servers";
+        this.section = 'servers';
     }
 
     /**
      * Set the routes
      */
     create() {
-        console.log("[ServerRoute::create] Creating server routes.");
+        console.log('[ServerRoute::create] Creating server routes.');
 
         this.registerRoute('/', Method.GET, (req, res) => { new ServerRoute().get(req, res); });
 
@@ -35,54 +35,58 @@ export class ServerRoute extends BaseRoute {
 
     /**
      * Gets all the servers
-     * @param req 
-     * @param res 
+     * @param req
+     * @param res
      */
     public async get(req: Request, res: Response) {
-        let servers = await this.serverService.getServers();
+        const servers = await this.serverService.getServers();
 
         this.render(req, res, servers);
     }
 
     /**
-     * add
+     * Adds the server
      * @param req
      * @param res
      */
     public async add(req: Request, res: Response) {
-        let server = await this.serverService.addServer(req.body);
+        const server = await this.serverService.addServer(req.body);
 
-        return server;
+        this.render(req, res, server);
     }
 
     /**
-     * edit
+     * Edits the server
      * @param req
      * @param res
      */
     public async edit(req: Request, res: Response) {
-        let server = await this.serverService.editServer(req.body);
+        const server = await this.serverService.editServer(req.body);
 
-        return server;
+        this.render(req, res, server);
     }
 
     /**
-     * 
-     * @param req 
-     * @param res 
+     * Removes the server
+     * @param req
+     * @param res
      */
     public async remove(req: Request, res: Response) {
-        let success = await this.serverService.removeServer(req.body);
+        const success = await this.serverService.removeServer(req.body);
 
-        return success;
+        this.render(req, res, success);
     }
 
     /**
      * Checks if the server is online
-     * @param req 
-     * @param res 
+     * @param req
+     * @param res
      */
-    public isOnline(req: Request, res: Response) {
-        this.render(req, res, {});
+    public async isOnline(req: Request, res: Response) {
+        const id = req.params['id'];
+        const server = await this.serverService.getServerById(id);
+        const available = await this.serverService.checkAvailable(server);
+
+        this.render(req, res, { date: new Date(), available: available });
     }
 }

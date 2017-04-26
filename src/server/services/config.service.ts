@@ -8,7 +8,7 @@ export class ConfigService<T> {
     }
 
     public async getConfig(): Promise<T> {
-        let config = await fs.readFile(this.fileName);
+        const config = await fs.readFile(this.fileName);
 
         return JSON.parse(config) as T;
     }

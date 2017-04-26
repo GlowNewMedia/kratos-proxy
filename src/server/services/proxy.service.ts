@@ -11,7 +11,7 @@ export class ProxyService {
     private proxy: any;
     private server: http.Server;
     private port: number;
-    
+
     /**
      *
      */
@@ -24,70 +24,101 @@ export class ProxyService {
      * Setup the proxy
      */
     public setupProxy(port: number) {
-        console.log("[ProxyService::setupProxy] Setup proxy on port: " + port);
+        console.log('[ProxyService::setupProxy] Setup proxy on port: ' + port);
 
         this.port = port;
 
         this.proxy = httpProxy.createServer();
 
-        this.server = http.createServer(async (req, res) => { await this.onRequest(req, res) });
+        this.proxy.on('error', async (error, req, res) => { this.proxyError(error, req, res); });
+
+        this.server = http.createServer(async (req, res) => { await this.onRequest(req, res); });
 
         this.server.listen(this.port);
 
         this.server.on('error', this.httpListenError);
 
-        this.server.on('listening', () => { console.log("[ProxyService::setupProxy] Now listening on port: " + this.port); })
+        this.server.on('listening', () => { console.log('[ProxyService::setupProxy] Now listening on port: ' + this.port); });
     }
 
     /**
      * Handles a server listen error
-     * @param error 
+     * @param error
      */
     public httpListenError(error: any) {
-        if (error.syscall !== "listen") {
+        if (error.syscall !== 'listen') {
             throw error;
         }
 
-        let bind = "Port " + this.port;
+        const bind = 'Port ' + this.port;
 
         // handle specific listen errors with friendly messages
         switch (error.code) {
-            case "EACCES":
-                console.error(bind + " requires elevated privileges");
-                process.exit(1);
-            break;
-            case "EADDRINUSE":
-                console.error(bind + " is already in use");
-                process.exit(1);
-            break;
+            case 'EACCES':
+                throw new Error(bind + ' requires elevated privileges');
+            case 'EADDRINUSE':
+                throw new Error(bind + ' is already in use');
             default:
                 throw error;
         }
     }
 
     /**
-     * Handles a proxy request
-     * @param req 
-     * @param res 
+     * Handles a proxy error
+     * @param error
      */
-    public async onRequest(req: http.IncomingMessage, res: http.ServerResponse) {
-        console.log("[ProxyService::onRequest] New Request");
-        console.time("[ProxyService::onRequest] Request Took");
+    public async proxyError(error: any, req: http.IncomingMessage, res: http.ServerResponse) {
+        console.log('[ProxyService::onRequest] Request failed.');
 
-        let target = await this.getProxy(req, res);
+        if (res.getHeader('X-Proxied') === 'false') {
+            console.log('[ProxyService::onRequest] Non proxied request failed. Sending error message.');
+            res.writeHead(500, {
+                'Content-Type': 'text/plain'
+            });
 
-        if(target == null){
+            switch (error.code) {
+                case 'ECONNREFUSED':
+                    res.end('Unable to connect. ECONNREFUSED');
+                    break;
+                default:
+                    res.end('Something went wrong. Error is: ' + JSON.stringify(error));
+                    break;
+            }
+        } else {
+            console.log('[ProxyService::onRequest] Sending non proxied request.');
+            res.setHeader('X-Proxied', 'false');
             this.proxy.web(req, res, {
                 target: { host: req.headers.host, port: 80 }
             });
         }
-        else{
+    }
+
+    /**
+     * Handles a proxy request
+     * @param req
+     * @param res
+     */
+    public async onRequest(req: http.IncomingMessage, res: http.ServerResponse) {
+        console.log('[ProxyService::onRequest] New Request');
+        // tslint:disable-next-line:no-console
+        console.time('[ProxyService::onRequest] Request Took');
+
+        const target = await this.getProxy(req, res);
+
+        if (target == null) {
+            res.setHeader('X-Proxied', 'false');
+            this.proxy.web(req, res, {
+                target: { host: req.headers.host, port: 80 }
+            });
+        } else {
+            res.setHeader('X-Proxied', 'true');
             this.proxy.web(req, res, {
                 target: target, toProxy: true
             });
         }
 
-        console.timeEnd("[ProxyService::onRequest] Request Took");
+        // tslint:disable-next-line:no-console
+        console.timeEnd('[ProxyService::onRequest] Request Took');
     }
 
     /**
@@ -97,27 +128,25 @@ export class ProxyService {
      * @returns target
      */
     public async getProxy(req: http.IncomingMessage, res: http.ServerResponse): Promise<{ host: string, port: number }> {
-        console.log("[ProxyService::getProxy] Finding the proxy for that request");
+        console.log('[ProxyService::getProxy] Finding the proxy for that request');
 
-        let ip = this.getIpFromRequest(req);
+        const ip = this.getIpFromRequest(req);
 
-        let serverId = await this.clientService.getResponsibleServerId(ip);
+        const serverId = await this.clientService.getResponsibleServerId(ip);
 
-        if (serverId.trim() == "") {
-            console.warn("[ProxyService::getProxy] No client found for ip: ", ip);
+        if (serverId.trim() === '') {
+            console.warn('[ProxyService::getProxy] No client found for ip: ', ip);
             return null;
-        }
-        else {
-            let server = await this.serverService.getServerById(serverId);
+        } else {
+            const server = await this.serverService.getServerById(serverId);
 
-            let serverAvailable = await this.serverService.checkAvailable(server);
+            const serverAvailable = await this.serverService.checkAvailable(server);
 
             if (serverAvailable) {
-                console.log("[ProxyService::getProxy] Proxy server available");
+                console.log('[ProxyService::getProxy] Proxy server available');
                 return { host: server.ip, port: server.port };
-            }
-            else {
-                console.log("[ProxyService::getProxy] Proxy server unavailable");
+            } else {
+                console.log('[ProxyService::getProxy] Proxy server unavailable');
                 return null;
             }
         }
@@ -129,8 +158,14 @@ export class ProxyService {
      * @return ip
      */
     public getIpFromRequest(req: http.IncomingMessage): string {
-        console.log("[ProxyService::getIpFromRequest] Finding ip from the request");
+        console.log('[ProxyService::getIpFromRequest] Finding ip from the request');
 
-        return req.connection.remoteAddress;
+        let ip = req.connection.remoteAddress;
+
+        if (ip.includes('::ffff:')) {
+            ip = ip.slice(7);
+        }
+
+        return ip;
     }
 }

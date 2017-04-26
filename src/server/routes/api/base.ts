@@ -6,15 +6,15 @@ export class BaseRoute {
 
     /**
      * The public bootstrap method
-     * @param router 
+     * @param router
      */
     public static bootstrap(router: Router) {
         new this().internalCreate(router);
     }
 
     /**
-     * Sets up the interal to a route 
-     * @param router 
+     * Sets up the interal to a route
+     * @param router
      */
     private internalCreate(router: Router) {
         this.router = router;
@@ -25,17 +25,17 @@ export class BaseRoute {
      * The create method on the extended class
      */
     public create() {
-        throw "Not Implemented";
+        throw new Error('Not Implemented');
     };
 
     /**
      * Registers a route
-     * @param route 
-     * @param method 
-     * @param callback 
+     * @param route
+     * @param method
+     * @param callback
      */
     public registerRoute(route: string, method: Method, callback: (req: Request, res: Response) => any) {
-        switch(method) {
+        switch (method) {
             case Method.GET:
                 this.router.get(this.getRoute(route), (req, res) => { callback(req, res); });
             break;
@@ -53,11 +53,11 @@ export class BaseRoute {
 
     /**
      * Gets the route from the parameter + api + section
-     * @param route 
+     * @param route
      */
     public getRoute(route: string) {
-        if(this.section == null || this.section.trim() == ""){
-            throw "Please set the section";
+        if (this.section == null || this.section.trim() === '') {
+            throw new Error('Please set the section');
         }
 
         return '/api/' + this.section + route;
@@ -65,9 +65,9 @@ export class BaseRoute {
 
     /**
      * Renders a json result
-     * @param req 
-     * @param res 
-     * @param data 
+     * @param req
+     * @param res
+     * @param data
      */
     public render(req: Request, res: Response, data: any) {
         res.json(data);

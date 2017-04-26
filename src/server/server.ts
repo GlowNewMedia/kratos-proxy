@@ -1,9 +1,9 @@
-import * as bodyParser from "body-parser";
-import * as express from "express";
-import * as logger from "morgan";
-import * as path from "path";
-import errorHandler = require("errorhandler");
-import methodOverride = require("method-override");
+import * as bodyParser from 'body-parser';
+import * as express from 'express';
+import * as logger from 'morgan';
+import * as path from 'path';
+import errorHandler = require('errorhandler');
+import methodOverride = require('method-override');
 
 import { ProxyService } from './services/proxy.service';
 
@@ -39,16 +39,16 @@ export class Server {
    * @constructor
    */
   constructor() {
-    //create expressjs application
+    // create expressjs application
     this.app = express();
 
-    //configure application
+    // configure application
     this.config();
 
-    //add api
+    // add api
     this.api();
 
-    //add routes
+    // add routes
     this.routes();
 
     // setup proxy
@@ -81,7 +81,7 @@ export class Server {
   public config() {
     this.app.use(express.static(path.join(__dirname, '../../app')));
 
-    this.app.use(logger("dev"));
+    this.app.use(logger('dev'));
 
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));

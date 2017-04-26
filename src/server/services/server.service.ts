@@ -15,15 +15,15 @@ export class ServerService {
      *
      */
     constructor() {
-        this.configService = new ConfigService<Server[]>("./config/server.json");
+        this.configService = new ConfigService<Server[]>('./config/server.json');
     }
 
     /**
      * getServers
      */
     public async getServers(): Promise<Server[]> {
-        console.log("[ServerService::getServers] Getting list of servers.");
-        
+        console.log('[ServerService::getServers] Getting list of servers.');
+
         return await this.configService.getConfig();
     }
 
@@ -31,23 +31,25 @@ export class ServerService {
      * getServerById
      */
     public async getServerById(id: string): Promise<Server> {
-        let servers = await this.getServers();
+        const servers = await this.getServers();
 
         return _.findWhere(servers, { id: id});
     }
 
     /**
      * Adds a client
-     * @param client 
+     * @param client
      */
     public async addServer(server: Server): Promise<Server> {
-        let servers = await this.getServers();
+        const servers = await this.getServers();
 
-        if(servers == null) {
-            throw "Client can not be null";
+        if (servers == null) {
+            throw new Error('Servers can not be null');
         }
 
-        server.id = uuidV4();
+        if (!(server.id != null && (await this.getServerById(server.id)) == null)) {
+            server.id = uuidV4();
+        }
 
         servers.push(server);
 
@@ -61,11 +63,11 @@ export class ServerService {
      * @param server
      */
     public async removeServer(server: Server): Promise<boolean> {
-        let servers = await this.getServers();
-        let index = _.findIndex(servers, { id: server.id });
+        const servers = await this.getServers();
+        const index = _.findIndex(servers, (listServer) => { return listServer.id === server.id; });
 
-        if(index == -1){
-            throw "Server not found";
+        if (index === -1) {
+            throw new Error('Server not found');
         }
 
         servers.splice(index, 1);
@@ -77,14 +79,14 @@ export class ServerService {
 
     /**
      * Edits a server
-     * @param server 
+     * @param server
      */
     public async editServer(server: Server): Promise<Server> {
-        let servers = await this.getServers();
-        let index = _.findIndex(servers, { id: server.id });
+        const servers = await this.getServers();
+        const index = _.findIndex(servers, (listServer) => { return listServer.id === server.id; });
 
-        if(index == -1){
-            throw "Server not found";
+        if (index === -1) {
+            throw new Error('Server not found');
         }
 
         servers[index] = server;
@@ -96,24 +98,23 @@ export class ServerService {
 
     /**
      * Checks if a server is available
-     * @param server 
+     * @param server
      * @returns available
      */
     public async checkAvailable(server: Server): Promise<boolean> {
-        if(ServerService.availableServerCache == null) {
-            console.log("[ServerService::checkAvailable] Cache not initialised");
+        if (ServerService.availableServerCache == null) {
+            console.log('[ServerService::checkAvailable] Cache not initialised');
             ServerService.availableServerCache = [];
         }
-        let index = _.findIndex(ServerService.availableServerCache, (item) => { return item.serverId == server.id; });
+        const index = _.findIndex(ServerService.availableServerCache, (item) => { return item.serverId === server.id; });
 
-        if(index > -1) {
-            let item = ServerService.availableServerCache[index];
-            if(item.date.getTime() >= new Date().getTime()) {
-                console.log("[ServerService::checkAvailable] Server in cache");
+        if (index > -1) {
+            const item = ServerService.availableServerCache[index];
+            if (item.date.getTime() >= new Date().getTime()) {
+                console.log('[ServerService::checkAvailable] Server in cache');
                 return item.available;
-            }
-            else{
-                console.log("[ServerService::checkAvailable] Server outdated in cache");
+            } else {
+                console.log('[ServerService::checkAvailable] Server outdated in cache');
                 item.available = await this.pingServer(server);
                 item.date = new Date(new Date().getTime() + 120000);
                 item.serverId = server.id;
@@ -122,11 +123,10 @@ export class ServerService {
 
                 return item.available;
             }
-        }
-        else{
-            console.log("[ServerService::checkAvailable] Server not in cache");
+        } else {
+            console.log('[ServerService::checkAvailable] Server not in cache');
 
-            let item = new AvailabilityResult();
+            const item = new AvailabilityResult();
             item.serverId = server.id;
             item.available = await this.pingServer(server);
             item.date = new Date(new Date().getTime() + 120000);
@@ -138,13 +138,14 @@ export class ServerService {
     }
 
     private async pingServer(server: Server): Promise<boolean> {
-        console.log("[ServerService::pingServer] Testing server availability for: ", server);
+        console.log('[ServerService::pingServer] Testing server availability for: ', server);
         return new Promise<boolean>((resolve, reject) => {
-                net.createConnection(server.port, server.ip).on("connect", function(e) {
-                    console.log("[ServerService::pingServer] Successful connection to server");
+                net.createConnection(server.port, server.ip).on('connect', function() {
+                    console.log('[ServerService::pingServer] Successful connection to server');
                     resolve(true);
-                }).on("error", function(e) {
-                    console.log("[ServerService::pingServer] Unable to connect to server: ", e.message);
+                    this.destroy();
+                }).on('error', function(e) {
+                    console.log('[ServerService::pingServer] Unable to connect to server: ', e.message);
                     resolve(false);
                 });
             });
