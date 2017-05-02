@@ -1,6 +1,6 @@
 <md-list>
   <ng-template [ngIf]="!loading">
-    <md-list-item *ngFor="let server of servers">
+    <md-list-item *ngFor="let server of serverService.servers">
       <md-icon md-list-icon>dvr</md-icon>
       <h4 md-line>{{server.name}}</h4>
       <p md-line>{{server.ip}}:{{server.port}}</p>

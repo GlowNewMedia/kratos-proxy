@@ -1,6 +1,6 @@
 <md-list>
   <ng-template [ngIf]="!loading">
-    <md-list-item *ngFor="let client of clients">
+    <md-list-item *ngFor="let client of clientService.clients">
       <md-icon md-list-icon>smartphone</md-icon>
       <h4 md-line>{{client.name}}</h4>
       <p md-line>{{client.ip}}</p>

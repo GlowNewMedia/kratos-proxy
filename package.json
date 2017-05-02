@@ -15,7 +15,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "sw": "sw-precache --root=dist/app --config=sw-precache-config.js"
   },
   "main": "server/dist/server",
   "private": true,

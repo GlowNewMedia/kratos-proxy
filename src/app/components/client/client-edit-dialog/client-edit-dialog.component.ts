@@ -20,7 +20,7 @@ export class ClientEditDialog implements OnInit {
   servers: Server[];
   filteredServers: any;
 
-  constructor(public dialogRef: MdDialogRef<ClientEditDialog>, public serverService: ServerService) {
+  constructor(public dialogRef: MdDialogRef<ClientEditDialog>) {
     this.serverCtrl = new FormControl();
     this.filteredServers = this.serverCtrl.valueChanges
         .startWith(null)
@@ -28,7 +28,6 @@ export class ClientEditDialog implements OnInit {
    }
 
   async ngOnInit() {
-    this.servers = await this.serverService.getServers();
 
     const server = _.findWhere(this.servers, { id: this.client.serverId });
     if (server != null) {

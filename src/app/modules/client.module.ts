@@ -6,7 +6,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClientService } from '../services/client.service';
 
 import { ClientListComponent } from '../components/client/client-list/client-list.component';
-import { ClientAddDialog } from '../components/client/client-add-dialog/client-add-dialog.component';
 import { ClientEditDialog } from '../components/client/client-edit-dialog/client-edit-dialog.component';
 
 @NgModule({
@@ -21,15 +20,14 @@ import { ClientEditDialog } from '../components/client/client-edit-dialog/client
   ],
   declarations: [
     ClientListComponent,
-    ClientAddDialog,
     ClientEditDialog
   ],
   entryComponents: [
-    ClientAddDialog,
     ClientEditDialog
   ],
   exports: [
-    ClientListComponent
+    ClientListComponent,
+    ClientEditDialog
   ]
 })
 export class ClientModule { }

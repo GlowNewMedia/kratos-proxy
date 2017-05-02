@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { ServerService } from '../services/server.service';
 
 import { ServerListComponent } from '../components/server/server-list/server-list.component';
-import { ServerAddDialog } from '../components/server/server-add-dialog/server-add-dialog.component';
 import { ServerEditDialog } from '../components/server/server-edit-dialog/server-edit-dialog.component';
 
 @NgModule({
@@ -20,15 +19,14 @@ import { ServerEditDialog } from '../components/server/server-edit-dialog/server
   ],
   declarations: [
     ServerListComponent,
-    ServerEditDialog,
-    ServerAddDialog
+    ServerEditDialog
   ],
   entryComponents: [
-    ServerEditDialog,
-    ServerAddDialog
+    ServerEditDialog
   ],
   exports: [
-    ServerListComponent
+    ServerListComponent,
+    ServerEditDialog
   ]
 })
 export class ServerModule { }

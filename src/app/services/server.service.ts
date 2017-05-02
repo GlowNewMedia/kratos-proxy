@@ -1,17 +1,31 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from './http.client';
 
 import { Server } from '../../shared/models/server';
 import { Availability } from '../../shared/models/availability';
 
 @Injectable()
-export class ServerService {
+export class ServerService implements OnInit {
+    public servers: Server[];
+
     /**
      *
      */
     constructor(private http: HttpClient) { }
 
-    public getServers(): Promise<Server[]> {
+    async ngOnInit() {
+        this.servers = await this.getServers();
+    }
+
+    public async ensureIntialised() {
+        if (this.servers == null) {
+            this.servers = await this.getServers();
+        }
+
+        return;
+    }
+
+    private getServers(): Promise<Server[]> {
         return this.http.get<Server[]>('/api/servers');
     }
 

@@ -1,0 +1,17 @@
+{
+  "name": "Kratos Proxy",
+  "short_name": "Kratos",
+  "icons": [
+		{
+			"src": "/assets/icon-144x144.png",
+			"sizes": "144x144",
+			"type": "image/png",
+			"density": 3
+		}
+  ],
+  "theme_color": "#008800",
+  "background_color": "#000000",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "landscape"
+}

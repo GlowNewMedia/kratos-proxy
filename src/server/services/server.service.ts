@@ -1,14 +1,14 @@
 import { ConfigService } from './config.service';
 
 import { Server } from '../../shared/models/server';
-import { AvailabilityResult } from '../models/availabilityResult';
+import { Availability } from '../../shared/models/availability';
 
 import * as net from 'net';
 import * as _ from 'underscore';
 import * as uuidV4 from 'uuid/v4';
 
 export class ServerService {
-    public static availableServerCache: AvailabilityResult[];
+    public static availableServerCache: Availability[];
     private configService: ConfigService<Server[]>;
 
     /**
@@ -126,7 +126,7 @@ export class ServerService {
         } else {
             console.log('[ServerService::checkAvailable] Server not in cache');
 
-            const item = new AvailabilityResult();
+            const item = new Availability();
             item.serverId = server.id;
             item.available = await this.pingServer(server);
             item.date = new Date(new Date().getTime() + 120000);
