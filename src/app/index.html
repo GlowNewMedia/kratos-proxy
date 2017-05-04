@@ -17,7 +17,7 @@
     navigator.serviceWorker.register('/service-worker.js').then(function(registeration) {
       console.log('Service Worker registered.');
     }).catch(function(error) {
-      console.error('Service Worker registeration failed: ', err);
+      console.error('Service Worker registeration failed: ', error);
     });
   }
 </script>

@@ -78,7 +78,7 @@ export class ProxyService {
 
             switch (error.code) {
                 case 'ECONNREFUSED':
-                    res.end('Unable to connect. ECONNREFUSED');
+                    res.end('Unable to connect. Connection refused.');
                     break;
                 default:
                     res.end('Something went wrong. Error is: ' + JSON.stringify(error));
@@ -163,6 +163,7 @@ export class ProxyService {
         let ip = req.connection.remoteAddress;
 
         if (ip.includes('::ffff:')) {
+            console.log('[ProxyService::getIpFromRequest] IP is ipv6 so stripping for ipv4');
             ip = ip.slice(7);
         }
 
