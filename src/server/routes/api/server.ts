@@ -22,15 +22,15 @@ export class ServerRoute extends BaseRoute {
     create() {
         console.log('[ServerRoute::create] Creating server routes.');
 
-        this.registerRoute('/', Method.GET, (req, res) => { new ServerRoute().get(req, res); });
+        this.registerRoute('/', Method.GET, (req, res) => { this.get(req, res); });
 
-        this.registerRoute('/add', Method.POST, (req, res) => { new ServerRoute().add(req, res); });
+        this.registerRoute('/add', Method.POST, (req, res) => { this.add(req, res); });
 
-        this.registerRoute('/edit', Method.POST, (req, res) => { new ServerRoute().edit(req, res); });
+        this.registerRoute('/edit', Method.POST, (req, res) => { this.edit(req, res); });
 
-        this.registerRoute('/remove', Method.POST, (req, res) => { new ServerRoute().remove(req, res); });
+        this.registerRoute('/remove', Method.POST, (req, res) => { this.remove(req, res); });
 
-        this.registerRoute('/online/:id', Method.GET, (req, res) => { new ServerRoute().isOnline(req, res); });
+        this.registerRoute('/online/:id', Method.GET, (req, res) => { this.isOnline(req, res); });
     }
 
     /**

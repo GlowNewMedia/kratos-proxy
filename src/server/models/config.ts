@@ -6,4 +6,5 @@ export class Config {
 export class ProxyConfig {
     port: number;
     addUknownDevices: boolean;
+    fallback: boolean;
 }

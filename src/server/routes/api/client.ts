@@ -19,13 +19,13 @@ export class ClientRoute extends BaseRoute {
     create() {
         console.log('[ClientRoute::create] Creating client routes.');
 
-        this.registerRoute('/', Method.GET, (req, res) => { new ClientRoute().get(req, res); });
+        this.registerRoute('/', Method.GET, (req, res) => { this.get(req, res); });
 
-        this.registerRoute('/add', Method.POST, (req, res) => { new ClientRoute().add(req, res); });
+        this.registerRoute('/add', Method.POST, (req, res) => { this.add(req, res); });
 
-        this.registerRoute('/edit', Method.POST, (req, res) => { new ClientRoute().edit(req, res); });
+        this.registerRoute('/edit', Method.POST, (req, res) => { this.edit(req, res); });
 
-        this.registerRoute('/remove', Method.POST, (req, res) => { new ClientRoute().remove(req, res); });
+        this.registerRoute('/remove', Method.POST, (req, res) => { this.remove(req, res); });
     }
 
     public async get(req: Request, res: Response) {

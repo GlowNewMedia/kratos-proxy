@@ -28,9 +28,10 @@ export class ProxyService {
 
         this.port = port;
 
-        this.proxy = httpProxy.createServer();
-
-        this.proxy.on('error', async (error, req, res) => { this.proxyError(error, req, res); });
+        if (this.proxy == null) {
+            this.proxy = httpProxy.createServer();
+            this.proxy.on('error', async (error, req, res) => { this.proxyError(error, req, res); });
+        }
 
         this.server = http.createServer(async (req, res) => { await this.onRequest(req, res); });
 
@@ -39,6 +40,17 @@ export class ProxyService {
         this.server.on('error', this.httpListenError);
 
         this.server.on('listening', () => { console.log('[ProxyService::setupProxy] Now listening on port: ' + this.port); });
+    }
+
+    /**
+     * Deconstructs the proxy to allow for setup again.
+     */
+    public deconstructProxy() {
+        this.server.close();
+
+        this.server.removeAllListeners();
+
+        delete this.server;
     }
 
     /**

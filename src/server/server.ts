@@ -8,11 +8,13 @@ import methodOverride = require('method-override');
 
 import { ProxyService } from './services/proxy.service';
 import { ConfigService } from './services/config.service';
+import { AppConfigService } from './services/appConfig.service';
 
+import { AppRoute } from './routes/api/app';
 import { ServerRoute } from './routes/api/server';
 import { ClientRoute } from './routes/api/client';
 
-import { Config } from './models/config';
+import { Config, ProxyConfig } from './models/config';
 
 /**
  * The server.
@@ -25,7 +27,7 @@ export class Server {
   public proxy: ProxyService;
   public httpServer: http.Server;
   public httpPort: string | number;
-  public configService: ConfigService<Config>;
+  public configService: AppConfigService;
 
   /**
    * Bootstrap the application.
@@ -76,6 +78,8 @@ export class Server {
     let router: express.Router;
     router = express.Router();
 
+    AppRoute.bootstrap(router);
+
     ServerRoute.bootstrap(router);
 
     ClientRoute.bootstrap(router);
@@ -91,7 +95,10 @@ export class Server {
    */
   public config() {
     // create config service
-    this.configService = new ConfigService<Config>('./config/app.json');
+    this.configService = new AppConfigService();
+    AppConfigService.events.onPortChange((port: number) => {
+      this.rebind(port);
+    });
 
     // present the app folder
     this.app.use(express.static(path.join(__dirname, '../../app')));
@@ -108,7 +115,7 @@ export class Server {
    * Create router
    *
    * @class Server
-   * @method api
+   * @method routes
    */
   public routes() {
     this.app.get('*', (req, res) => {
@@ -120,9 +127,14 @@ export class Server {
    * Create proxy
    */
   public setupProxy() {
-    this.configService.getConfig().then((config: Config) => {
+    this.configService.getProxyConfig().then((config: ProxyConfig) => {
       this.proxy = new ProxyService();
-      this.proxy.setupProxy(config.proxy.port);
+      this.proxy.setupProxy(config.port);
+      AppConfigService.events.onProxyPortChange((port: number) => {
+        this.proxy.deconstructProxy();
+
+        this.proxy.setupProxy(port);
+      });
     });
   }
 
@@ -130,7 +142,7 @@ export class Server {
    * Listen on http
    */
   public listen() {
-    this.configService.getConfig().then((config: Config) => {
+    this.configService.getServerConfig().then((config: Config) => {
       if (config != null) {
         this.httpPort = this.normalizePort(process.env.PORT || config.port);
 
@@ -154,6 +166,16 @@ export class Server {
    */
   public stopListening() {
     return this.httpServer.close();
+  }
+
+  /**
+   * Rebinds to listen on a new port
+   * @param port
+   */
+  public rebind(port: number) {
+    this.stopListening();
+
+    this.listen();
   }
 
   /**
