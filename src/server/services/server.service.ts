@@ -7,7 +7,7 @@ import * as net from 'net';
 import * as _ from 'underscore';
 import * as uuidV4 from 'uuid/v4';
 
-export class ServerService {
+export class ServerService extends ConfigService<Server[]> {
     public static availableServerCache: Availability[];
     private configService: ConfigService<Server[]>;
 
@@ -15,7 +15,7 @@ export class ServerService {
      *
      */
     constructor() {
-        this.configService = new ConfigService<Server[]>('./config/server.json');
+        super('./config/server.json');
     }
 
     /**
@@ -24,7 +24,7 @@ export class ServerService {
     public async getServers(): Promise<Server[]> {
         console.log('[ServerService::getServers] Getting list of servers.');
 
-        return await this.configService.getConfig();
+        return await this.getConfig();
     }
 
     /**
@@ -53,7 +53,7 @@ export class ServerService {
 
         servers.push(server);
 
-        await this.configService.saveConfig(servers);
+        await this.saveConfig(servers);
 
         return server;
     }
@@ -72,7 +72,7 @@ export class ServerService {
 
         servers.splice(index, 1);
 
-        await this.configService.saveConfig(servers);
+        await this.saveConfig(servers);
 
         return true;
     }
@@ -91,7 +91,7 @@ export class ServerService {
 
         servers[index] = server;
 
-        await this.configService.saveConfig(servers);
+        await this.saveConfig(servers);
 
         return server;
     }
@@ -149,5 +149,9 @@ export class ServerService {
                     resolve(false);
                 });
             });
+    }
+
+    protected getDefaultConfig(): Server[] {
+        return [];
     }
 }

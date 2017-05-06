@@ -4,30 +4,30 @@ import { ConfigService } from './config.service';
 
 import { Config, ProxyConfig } from '../models/config';
 
-export class AppConfigService {
+export class AppConfigService extends ConfigService<Config> {
     public static events: AppEventEmitter;
     private configService: ConfigService<Config>;
 
     constructor() {
-        this.configService = new ConfigService<Config>('./config/app.json');
+        super('./config/app.json');
         if (AppConfigService.events == null) {
             AppConfigService.events = new AppEventEmitter();
         }
     }
 
     async getProxyConfig(): Promise<ProxyConfig> {
-        const config = await this.configService.getConfig();
+        const config = await this.getConfig();
 
         return config.proxy;
     }
 
     getServerConfig(): Promise<Config> {
-        return this.configService.getConfig();
+        return this.getConfig();
     }
 
     async updateConfig(config: Config) {
         const oldConfig = await this.getServerConfig();
-        await this.configService.saveConfig(config);
+        await this.saveConfig(config);
 
         if (oldConfig.port !== config.port) {
             AppConfigService.events.sendPort(config.port);
@@ -36,6 +36,17 @@ export class AppConfigService {
         if (oldConfig.proxy.port !== config.proxy.port) {
             AppConfigService.events.sendProxyPort(config.proxy.port);
         }
+    }
+
+    protected getDefaultConfig(): Config {
+        return {
+            'port': 3000,
+            'proxy': {
+                'port': 2020,
+                'addUknownDevices': false,
+                'fallback': true
+            }
+        };
     }
 }
 

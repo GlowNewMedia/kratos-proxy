@@ -5,14 +5,12 @@ import { Client } from '../../shared/models/client';
 import * as _ from 'underscore';
 import * as uuidV4 from 'uuid/v4';
 
-export class ClientService {
-    private configService: ConfigService<Client[]>;
-
+export class ClientService extends ConfigService<Client[]> {
     /**
      *
      */
     constructor() {
-        this.configService = new ConfigService<Client[]>('./config/client.json');
+        super('./config/client.json');
     }
 
     /**
@@ -21,7 +19,7 @@ export class ClientService {
     public async getClients(): Promise<Client[]> {
         console.log('[ClientService::getClients] Getting list of clients');
 
-        return await this.configService.getConfig();
+        return await this.getConfig();
     }
 
     /**
@@ -51,7 +49,7 @@ export class ClientService {
 
         clients.push(client);
 
-        await this.configService.saveConfig(clients);
+        await this.saveConfig(clients);
 
         return client;
     }
@@ -70,7 +68,7 @@ export class ClientService {
 
         clients.splice(index, 1);
 
-        await this.configService.saveConfig(clients);
+        await this.saveConfig(clients);
 
         return true;
     }
@@ -89,7 +87,7 @@ export class ClientService {
 
         clients[index] = client;
 
-        await this.configService.saveConfig(clients);
+        await this.saveConfig(clients);
 
         return client;
     }
@@ -110,5 +108,9 @@ export class ClientService {
         } else {
             return client.serverId;
         }
+    }
+
+    protected getDefaultConfig(): Client[] {
+        return [];
     }
 }
